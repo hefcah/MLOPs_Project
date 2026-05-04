@@ -1,0 +1,16 @@
+global:
+  scrape_interval: 5s     # Har 5 second baad metrics collect karega
+  evaluation_interval: 5s # Rules ko evaluate karne ka waqt
+
+scrape_configs:
+  # --- Job 1: FastAPI Monitoring ---
+  - job_name: 'mlops_api'
+    metrics_path: '/metrics' # Ye wo endpoint hai jahan se Prometheus data uthayega
+    static_configs:
+      # 'fastapi_app' aapki docker-compose service ka naam hai
+      - targets: ['fastapi_app:8000']
+
+  # --- Job 2: Prometheus Self-Monitoring (Optional) ---
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
