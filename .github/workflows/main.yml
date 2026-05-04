@@ -1,9 +1,12 @@
 name: MLOps CI/CD Pipeline
 
-on: [push]
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  #  JOB 1: BUILD & TEST
   build-and-test:
     runs-on: ubuntu-latest
     steps:
@@ -17,14 +20,15 @@ jobs:
 
       - name: Install Dependencies
         run: |
+          python -m pip install --upgrade pip
           pip install fastapi uvicorn prometheus-client pydantic pytest httpx
 
       - name: Run Unit Tests
         run: |
-          # temp test file to check API endpoints
           cat <<EOF > test_main.py
           from fastapi.testclient import TestClient
           from app import app
+          import pytest
 
           client = TestClient(app)
 
@@ -47,18 +51,16 @@ jobs:
           EOF
           pytest test_main.py
 
-  #  JOB 2: DEPLOY 
   deploy:
-    needs: build-and-test  
+    needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' 
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Deployment Simulation
         run: |
-          echo "Deploying to Production Server..."
-          echo "Building Docker Images..."
-         
-          echo "MLOps Pipeline Deployed Successfully! "
+          echo "Verifying Build Artifacts..."
+          echo "Simulating Docker Hub Push..."
+          echo "MLOps Pipeline Deployed Successfully! 🚀"
